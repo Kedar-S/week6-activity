@@ -22,12 +22,12 @@
             border-radius: 2px;
             line-height: 1;
         }
-        
+
         path {
             stroke-width: .5px;
             stroke: black
         }
-        
+
         path:hover {
             opacity: .6;
             stroke: black;
@@ -73,8 +73,8 @@
             /*-------------------------------------------------------*/
             /*-----------------Topojson data handling----------------*/
             /*-------------------------------------------------------*/
-            // if topojson file is imported we need to 
-            // convert topology data to geojson 
+            // if topojson file is imported we need to
+            // convert topology data to geojson
             const geojson = topojson.feature(topo_data, topo_data.objects.ma);
 
             /*-------------------------------------------------------*/
@@ -107,13 +107,15 @@
                 // if the data is scaled using log scale
             let logScale = d3.scaleLog()
                 .domain(d3.extent(geojson.features, (d) => {
-                    return d['properties']['POP2010']
+                    return d['properties']['POPCH80_90']
                 }))
 
             // if the data is scaled using linear scale
             let linearScale = d3.scaleLinear()
                 .domain(d3.extent(geojson.features, (d) => {
-                    return d['properties']['POP2010']
+                    let x = d['properties']['POPCH80_90'] + d['properties']['POPCH90_00']
+                    + d['properties']['POPCH00_10'];
+                    return x//d['properties']['POPCH80_90']
                 }))
 
             /*-------------------------------------------------------*/
@@ -136,7 +138,8 @@
                 .append("path")
                 .attr("d", d => geoPath_generator(d))
                 //.attr("fill", d => colorInterpolator(logScale(d['properties']['POP2010'])))
-                .attr("fill", d => colorInterpolator(linearScale(d['properties']['POP2010'])))
+                .attr("fill", d => colorInterpolator(linearScale(d['properties']['POPCH80_90'] +
+              d['properties']['POPCH90_00'] + d['properties']['POPCH00_10'])))
                 .on("mouseenter", (m, d) => {
                     tooltip.transition()
                         .duration(200)
